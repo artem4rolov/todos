@@ -29,10 +29,18 @@ const initialData = [
 export default class App extends Component {
   constructor(props) {
     super(props);
-    this.state = { data: initialData };
+    this.state = { data: initialData, showMobileMenu: false };
     this.deleteDeed = this.deleteDeed.bind(this);
     this.checkDeed = this.checkDeed.bind(this);
     this.addDeed = this.addDeed.bind(this);
+    this.showMobileMenu = this.showMobileMenu.bind(this);
+  }
+
+  showMobileMenu(e) {
+    e.preventDefault();
+    this.setState((state) => ({
+      showMobileMenu: !state.showMobileMenu,
+    }));
   }
 
   addDeed(deedObj) {
@@ -62,7 +70,7 @@ export default class App extends Component {
       <HashRouter>
         <nav className="navbar is-light">
           <div className="navbar-brand">
-            {/* кнопка TODOS */}
+            {/* Лого */}
             <NavLink
               to="/"
               className={({ isActive }) =>
@@ -71,9 +79,30 @@ export default class App extends Component {
             >
               Todos
             </NavLink>
+            {/* Иконка меню-бургера на мобильных устройствах */}
+            <a
+              href="/"
+              className={
+                this.state.showMobileMenu
+                  ? "navbar-burger is-active"
+                  : "navbar-burger"
+              }
+              onClick={this.showMobileMenu}
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </a>
           </div>
-          {/* кнопка СОЗДАТЬ ДЕЛО */}
-          <div className="navbar-menu">
+          {/* Меню */}
+          <div
+            className={
+              this.state.showMobileMenu
+                ? "navbar-menu is-active"
+                : "navbar-menu"
+            }
+            onClick={this.showMobileMenu}
+          >
             <div className="navbar-start">
               <NavLink
                 to="/add"
