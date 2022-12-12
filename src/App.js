@@ -1,4 +1,6 @@
 import { Component } from "react";
+import { HashRouter, Routes, Route, NavLink } from "react-router-dom";
+
 import TodoAdd from "./TodoAdd";
 import TodoList from "./TodoList";
 
@@ -57,21 +59,49 @@ export default class App extends Component {
 
   render() {
     return (
-      <div>
+      <HashRouter>
         <nav className="navbar is-light">
           <div className="navbar-brand">
-            <span className="navbar-item is-uppercase">Todos</span>
+            {/* кнопка TODOS */}
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                "navbar-item is-uppercase" + (isActive ? " is-active" : "")
+              }
+            >
+              Todos
+            </NavLink>
+          </div>
+          {/* кнопка СОЗДАТЬ ДЕЛО */}
+          <div className="navbar-menu">
+            <div className="navbar-start">
+              <NavLink
+                to="/add"
+                className={({ isActive }) =>
+                  "navbar-item" + (isActive ? " is-active" : "")
+                }
+              >
+                Создать дело
+              </NavLink>
+            </div>
           </div>
         </nav>
         <main className="content px-6 mt-6">
-          <TodoList
-            data={this.state.data}
-            deleteDeed={this.deleteDeed}
-            checkDeed={this.checkDeed}
-          />
-          <TodoAdd addDeed={this.addDeed} />
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <TodoList
+                  data={this.state.data}
+                  deleteDeed={this.deleteDeed}
+                  checkDeed={this.checkDeed}
+                />
+              }
+            />
+            <Route path="/add" element={<TodoAdd addDeed={this.addDeed} />} />
+          </Routes>
         </main>
-      </div>
+      </HashRouter>
     );
   }
 }

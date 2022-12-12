@@ -68,8 +68,8 @@ export default class TodoAdd extends Component {
           <div className="field">
             <label className="label">Описание</label>
             <div className="control">
-              <input
-                type="text"
+              <textarea
+                type="textarea"
                 className="input"
                 onChange={this.handleChangeDesc}
               />
