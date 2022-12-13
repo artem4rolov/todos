@@ -99,3 +99,15 @@ export async function setDone(user, key) {
 export async function del(user, key) {
   return remove(ref(getDatabase(), `users/${user.uid}/todos/${key}`));
 }
+
+// ПРИМЕР БД FIREBASE
+
+// users
+//    ffXkJ0wV9nSzWouBckyIznG9L5h1  (user.uid) - уникальный id юзера (в нашем случае test@user.ru)
+//      todos
+//        -NJAZAeI5rFzhZRn0ZmS      (todo.uid) - уникальный номер дела конкретного юзера (в нашем случае - "тест 2")
+//            createdAt: "13.12.2022, 16:00:02"
+//            desc: "тест описание 2"
+//            done: false
+//            image: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/4THsRXhp..."
+//            title: "тест 2"
