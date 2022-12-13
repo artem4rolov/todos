@@ -58,7 +58,9 @@ export default class TodoAdd extends Component {
   }
 
   render() {
-    if (this.state.redirect) {
+    if (!this.props.currentUser) {
+      return <Navigate to="/login" replace />;
+    } else if (this.state.redirect) {
       return <Navigate to="/" replace />;
     } else
       return (

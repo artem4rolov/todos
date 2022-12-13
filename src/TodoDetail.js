@@ -1,10 +1,14 @@
 import { useParams } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 export default function TodoDetails(props) {
   const { key } = useParams();
   const deed = props.getDeed(key);
 
-  return (
+  // проверяем, вошел юзер или нет
+  return !props.currentUser ? (
+    <Navigate to="/login" replace />
+  ) : (
     <section>
       <div className="field">
         <div className="control">

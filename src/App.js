@@ -206,6 +206,7 @@ export default class App extends Component {
                   data={this.state.data}
                   deleteDeed={this.deleteDeed}
                   checkDeed={this.checkDeed}
+                  currentUser={this.state.currentUser}
                 />
               }
             />
@@ -220,7 +221,12 @@ export default class App extends Component {
             />
             <Route
               path="/:key"
-              element={<TodoDetail getDeed={this.getDeed} />}
+              element={
+                <TodoDetail
+                  getDeed={this.getDeed}
+                  currentUser={this.state.currentUser}
+                />
+              }
             />
             <Route
               path="/register"

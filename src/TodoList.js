@@ -1,9 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 import TodoDetails from "./TodoDetail";
 
 export default function TodoList(props) {
-  return (
+  // проверяем, вошел юзер или нет
+  return !props.currentUser ? (
+    <Navigate to="/login" replace />
+  ) : (
     <section>
       <h1>Дела</h1>
       <table className="table is-hoverable is-fullwidth">
