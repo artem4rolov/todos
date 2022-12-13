@@ -10,7 +10,11 @@ import Register from "./Register";
 import Login from "./Login";
 import Logout from "./Logout";
 
-import { getList } from "./api";
+import { getList, setDone } from "./api";
+
+// ТЕСТОВЫЙ ЮЗЕР
+// login  test@user.ru
+// pass   123456
 
 // больше не нужны статичные данные, поскольку есть данные из БД firebase при входе в приложение
 // const date1 = new Date(2022, 7, 19, 14, 5);
@@ -95,7 +99,10 @@ export default class App extends Component {
     }));
   }
 
-  checkDeed(key) {
+  async checkDeed(key) {
+    // сначала делаем пометку о выполненном деле в БД firebase
+    await setDone(this.state.currentUser, key);
+    // затем сразу меняем пометку в state
     const deed = this.state.data.find((deed) => deed.key === key);
     if (deed) {
       deed.done = !deed.done;

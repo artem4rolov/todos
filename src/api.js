@@ -80,3 +80,9 @@ export async function getList(user) {
   });
   return oArr;
 }
+
+// пометка дела как выполненного
+export async function setDone(user, key) {
+  // сначала даем ссылку для функции set на конкретное дело юзера в БД (с помощью key), затем просто передаем значение true
+  return set(ref(getDatabase(), `users/${user.uid}/todos/${key}/done`), true);
+}
