@@ -1,9 +1,14 @@
 import { Component } from "react";
 import { HashRouter, Routes, Route, NavLink } from "react-router-dom";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import firebaseApp from "./firebase";
 
 import TodoAdd from "./TodoAdd";
 import TodoList from "./TodoList";
 import TodoDetail from "./TodoDetail";
+import Register from "./Register";
+import Login from "./Login";
+import Logout from "./Logout";
 
 const date1 = new Date(2022, 7, 19, 14, 5);
 const date2 = new Date(2022, 8, 11, 12, 8);
@@ -30,12 +35,26 @@ const initialData = [
 export default class App extends Component {
   constructor(props) {
     super(props);
-    this.state = { data: initialData, showMobileMenu: false };
+    this.state = {
+      data: initialData,
+      showMobileMenu: false,
+      currentUser: undefined,
+    };
     this.deleteDeed = this.deleteDeed.bind(this);
     this.checkDeed = this.checkDeed.bind(this);
     this.addDeed = this.addDeed.bind(this);
     this.showMobileMenu = this.showMobileMenu.bind(this);
     this.getDeed = this.getDeed.bind(this);
+    this.authStateChanged = this.authStateChanged.bind(this);
+  }
+
+  authStateChanged(user) {
+    this.setState((state) => ({ currentUser: user }));
+  }
+
+  componentDidMount() {
+    onAuthStateChanged(getAuth(firebaseApp), this.authStateChanged);
+    console.log(this.state.currentUser);
   }
 
   showMobileMenu(e) {
@@ -84,7 +103,7 @@ export default class App extends Component {
                 "navbar-item is-uppercase" + (isActive ? " is-active" : "")
               }
             >
-              Todos
+              {this.state.currentUser ? this.state.currentUser.email : "Todos"}
             </NavLink>
             {/* Иконка меню-бургера на мобильных устройствах */}
             <a
@@ -111,15 +130,51 @@ export default class App extends Component {
             onClick={this.showMobileMenu}
           >
             <div className="navbar-start">
+              {/* если есть пользователь в обекте this.state.currentUser */}
+              {this.state.currentUser && (
+                <NavLink
+                  to="/add"
+                  className={({ isActive }) =>
+                    "navbar-item" + (isActive ? " is-active" : "")
+                  }
+                >
+                  Создать дело
+                </NavLink>
+              )}
+              {/* Войти */}
+              {!this.state.currentUser && (
+                <NavLink
+                  to="/login"
+                  className={({ isActive }) =>
+                    "navbar-item" + (isActive ? " is-active" : "")
+                  }
+                >
+                  Войти
+                </NavLink>
+              )}
+              {/* если нет пользователя в объекте this.state.currentUser, то регистрация */}
+              {!this.state.currentUser && (
+                <NavLink
+                  to="/register"
+                  className={({ isActive }) =>
+                    "navbar-item" + (isActive ? " is-active" : "")
+                  }
+                >
+                  Зарегистрироваться
+                </NavLink>
+              )}
+            </div>
+            {/* если пользователь вошел (есть данные в объекте this.state.currentUser) */}
+            {this.state.currentUser && (
               <NavLink
-                to="/add"
+                to="/logout"
                 className={({ isActive }) =>
                   "navbar-item" + (isActive ? " is-active" : "")
                 }
               >
-                Создать дело
+                Выйти
               </NavLink>
-            </div>
+            )}
           </div>
         </nav>
         <main className="content px-6 mt-6">
@@ -138,6 +193,18 @@ export default class App extends Component {
             <Route
               path="/:key"
               element={<TodoDetail getDeed={this.getDeed} />}
+            />
+            <Route
+              path="/register"
+              element={<Register currentUser={this.state.currentUser} />}
+            />
+            <Route
+              path="/login"
+              element={<Login currentUser={this.state.currentUser} />}
+            />
+            <Route
+              path="/logout"
+              element={<Logout currentUser={this.state.currentUser} />}
             />
           </Routes>
         </main>
