@@ -1,9 +1,11 @@
 import { Component } from "react";
+import { Navigate } from "react-router-dom";
 
 export default class TodoAdd extends Component {
   constructor(props) {
     super(props);
     this.formData = {};
+    this.state = { redirect: false };
     this.clearData = this.clearData.bind(this);
     this.handleSubmitForm = this.handleSubmitForm.bind(this);
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
@@ -27,6 +29,7 @@ export default class TodoAdd extends Component {
     newDeed.createdAt = date.toLocaleString();
     newDeed.key = date.getTime();
     this.props.addDeed(newDeed);
+    this.setState({ redirect: true });
   }
 
   handleChangeTitle(e) {
@@ -51,63 +54,66 @@ export default class TodoAdd extends Component {
   }
 
   render() {
-    return (
-      <section>
-        <h1>Создание нового дела</h1>
-        <form onSubmit={this.handleSubmitForm}>
-          <div className="field">
-            <label className="label">Заголовок</label>
-            <div className="control">
-              <input
-                type="text"
-                className="input"
-                onChange={this.handleChangeTitle}
-              />
-            </div>
-          </div>
-          <div className="field">
-            <label className="label">Описание</label>
-            <div className="control">
-              <textarea
-                type="textarea"
-                className="input"
-                onChange={this.handleChangeDesc}
-              />
-            </div>
-          </div>
-          <div className="field">
-            <div className="file">
-              <label className="file-label">
+    if (this.state.redirect) {
+      return <Navigate to="/" replace />;
+    } else
+      return (
+        <section>
+          <h1>Создание нового дела</h1>
+          <form onSubmit={this.handleSubmitForm}>
+            <div className="field">
+              <label className="label">Заголовок</label>
+              <div className="control">
                 <input
-                  type="file"
-                  className="file-input"
-                  accept="image/*"
-                  onChange={this.handleChangeImage}
+                  type="text"
+                  className="input"
+                  onChange={this.handleChangeTitle}
                 />
-                <span className="file-cta">
-                  <span className="file-label">Изображение</span>
-                </span>
-              </label>
+              </div>
             </div>
-          </div>
-          <div className="field is-grouped is-grouped-right">
-            <div className="control">
-              <input
-                type="reset"
-                className="button is-link is-light"
-                value="Сброс"
-              />
+            <div className="field">
+              <label className="label">Описание</label>
+              <div className="control">
+                <textarea
+                  type="textarea"
+                  className="input"
+                  onChange={this.handleChangeDesc}
+                />
+              </div>
             </div>
-            <div className="control">
-              <input
-                type="submit"
-                className="button is-primary"
-                value="Создать дело"
-              />
+            <div className="field">
+              <div className="file">
+                <label className="file-label">
+                  <input
+                    type="file"
+                    className="file-input"
+                    accept="image/*"
+                    onChange={this.handleChangeImage}
+                  />
+                  <span className="file-cta">
+                    <span className="file-label">Изображение</span>
+                  </span>
+                </label>
+              </div>
             </div>
-          </div>
-        </form>
-      </section>
-    );
+            <div className="field is-grouped is-grouped-right">
+              <div className="control">
+                <input
+                  type="reset"
+                  className="button is-link is-light"
+                  value="Сброс"
+                />
+              </div>
+              <div className="control">
+                <input
+                  type="submit"
+                  className="button is-primary"
+                  value="Создать дело"
+                />
+              </div>
+            </div>
+          </form>
+        </section>
+      );
   }
 }

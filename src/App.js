@@ -3,6 +3,7 @@ import { HashRouter, Routes, Route, NavLink } from "react-router-dom";
 
 import TodoAdd from "./TodoAdd";
 import TodoList from "./TodoList";
+import TodoDetail from "./TodoDetail";
 
 const date1 = new Date(2022, 7, 19, 14, 5);
 const date2 = new Date(2022, 8, 11, 12, 8);
@@ -34,6 +35,7 @@ export default class App extends Component {
     this.checkDeed = this.checkDeed.bind(this);
     this.addDeed = this.addDeed.bind(this);
     this.showMobileMenu = this.showMobileMenu.bind(this);
+    this.getDeed = this.getDeed.bind(this);
   }
 
   showMobileMenu(e) {
@@ -41,6 +43,11 @@ export default class App extends Component {
     this.setState((state) => ({
       showMobileMenu: !state.showMobileMenu,
     }));
+  }
+
+  getDeed(key) {
+    key = +key;
+    return this.state.data.find((deed) => deed.key === key);
   }
 
   addDeed(deedObj) {
@@ -128,6 +135,10 @@ export default class App extends Component {
               }
             />
             <Route path="/add" element={<TodoAdd addDeed={this.addDeed} />} />
+            <Route
+              path="/:key"
+              element={<TodoDetail getDeed={this.getDeed} />}
+            />
           </Routes>
         </main>
       </HashRouter>

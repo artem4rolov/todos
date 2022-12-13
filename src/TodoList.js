@@ -1,3 +1,7 @@
+import { Link } from "react-router-dom";
+
+import TodoDetails from "./TodoDetail";
+
 export default function TodoList(props) {
   return (
     <section>
@@ -7,8 +11,10 @@ export default function TodoList(props) {
           {props.data.map((deed) => (
             <tr key={deed.key}>
               <td>
-                {deed.done && <del>{deed.title}</del>}
-                {!deed.done && deed.title}
+                <Link to={`/${deed.key}`}>
+                  {deed.done && <del>{deed.title}</del>}
+                  {!deed.done && deed.title}
+                </Link>
               </td>
               <td>
                 <button
