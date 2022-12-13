@@ -10,33 +10,36 @@ import Register from "./Register";
 import Login from "./Login";
 import Logout from "./Logout";
 
-const date1 = new Date(2022, 7, 19, 14, 5);
-const date2 = new Date(2022, 8, 11, 12, 8);
+import { getList } from "./api";
 
-const initialData = [
-  {
-    title: "Первое дело",
-    desc: "Описание дела",
-    image: "",
-    done: false,
-    createdAt: date1.toLocaleString(),
-    key: date1.getTime(),
-  },
-  {
-    title: "Второе дело",
-    desc: "Описание второго дела",
-    image: "",
-    done: false,
-    createdAt: date2.toLocaleString(),
-    key: date2.getTime(),
-  },
-];
+// больше не нужны статичные данные, поскольку есть данные из БД firebase при входе в приложение
+// const date1 = new Date(2022, 7, 19, 14, 5);
+// const date2 = new Date(2022, 8, 11, 12, 8);
+
+// const initialData = [
+//   {
+//     title: "Первое дело",
+//     desc: "Описание дела",
+//     image: "",
+//     done: false,
+//     createdAt: date1.toLocaleString(),
+//     key: date1.getTime(),
+//   },
+//   {
+//     title: "Второе дело",
+//     desc: "Описание второго дела",
+//     image: "",
+//     done: false,
+//     createdAt: date2.toLocaleString(),
+//     key: date2.getTime(),
+//   },
+// ];
 
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: initialData,
+      data: [],
       showMobileMenu: false,
       currentUser: undefined,
     };
@@ -48,8 +51,16 @@ export default class App extends Component {
     this.authStateChanged = this.authStateChanged.bind(this);
   }
 
-  authStateChanged(user) {
+  async authStateChanged(user) {
     this.setState((state) => ({ currentUser: user }));
+    if (user) {
+      // если юзер вошел в приложение, то получаем список его дел через функцию getList из api.js и пихаем их в state
+      const newData = await getList(user);
+      this.setState((state) => ({ data: newData }));
+    } else {
+      // если юзер не вошел, передаем пустой список дел в state
+      this.setState((state) => ({ data: [] }));
+    }
   }
 
   componentDidMount() {
@@ -65,7 +76,8 @@ export default class App extends Component {
   }
 
   getDeed(key) {
-    key = +key;
+    // преобразование key в число при выводе дела уже не нужно, поскольку в БД идентификаторы дел (deed.key) сохраняются в string
+    // key = +key;
     return this.state.data.find((deed) => deed.key === key);
   }
 
@@ -189,7 +201,15 @@ export default class App extends Component {
                 />
               }
             />
-            <Route path="/add" element={<TodoAdd addDeed={this.addDeed} />} />
+            <Route
+              path="/add"
+              element={
+                <TodoAdd
+                  addDeed={this.addDeed}
+                  currentUser={this.state.currentUser}
+                />
+              }
+            />
             <Route
               path="/:key"
               element={<TodoDetail getDeed={this.getDeed} />}

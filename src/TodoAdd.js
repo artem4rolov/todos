@@ -1,5 +1,6 @@
 import { Component } from "react";
 import { Navigate } from "react-router-dom";
+import { add } from "./api";
 
 export default class TodoAdd extends Component {
   constructor(props) {
@@ -21,14 +22,17 @@ export default class TodoAdd extends Component {
     };
   }
 
-  handleSubmitForm(e) {
+  async handleSubmitForm(e) {
     e.preventDefault();
     const newDeed = { ...this.formData };
     const date = new Date();
     newDeed.done = false;
     newDeed.createdAt = date.toLocaleString();
-    newDeed.key = date.getTime();
-    this.props.addDeed(newDeed);
+    // newDeed.key = date.getTime();
+    // this.props.addDeed(newDeed);
+    // добавим новое дело сначала в БД firebase, затем в state, key задаем предварительно в функции add в api.js
+    const addedDeed = await add(this.props.currentUser, newDeed);
+    this.props.addDeed(addedDeed);
     this.setState({ redirect: true });
   }
 
