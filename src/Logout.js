@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { logout } from "./auth";
+import { logout } from "./api";
 
 export default function Logout(props) {
   if (props.currentUser) {
