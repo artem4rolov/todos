@@ -6,12 +6,28 @@ export default class TodoAdd extends Component {
   constructor(props) {
     super(props);
     this.formData = {};
-    this.state = { redirect: false };
+    this.state = { redirect: false, errorTitle: "" };
     this.clearData = this.clearData.bind(this);
     this.handleSubmitForm = this.handleSubmitForm.bind(this);
     this.handleChangeTitle = this.handleChangeTitle.bind(this);
     this.handleChangeDesc = this.handleChangeDesc.bind(this);
     this.handleChangeImage = this.handleChangeImage.bind(this);
+  }
+
+  resetErrorMessages() {
+    this.setState((state) => ({
+      errorTitle: "",
+    }));
+  }
+
+  validate() {
+    if (!this.formData.title) {
+      this.setState((state) => ({
+        errorTitle: "Введите хотя бы название дела!",
+      }));
+      return false;
+    }
+    return true;
   }
 
   clearData() {
@@ -24,16 +40,18 @@ export default class TodoAdd extends Component {
 
   async handleSubmitForm(e) {
     e.preventDefault();
-    const newDeed = { ...this.formData };
-    const date = new Date();
-    newDeed.done = false;
-    newDeed.createdAt = date.toLocaleString();
-    // newDeed.key = date.getTime();
-    // this.props.addDeed(newDeed);
-    // добавим новое дело сначала в БД firebase, затем в state, key задаем предварительно в функции add в api.js
-    const addedDeed = await add(this.props.currentUser, newDeed);
-    this.props.addDeed(addedDeed);
-    this.setState({ redirect: true });
+    if (this.validate()) {
+      const newDeed = { ...this.formData };
+      const date = new Date();
+      newDeed.done = false;
+      newDeed.createdAt = date.toLocaleString();
+      // newDeed.key = date.getTime();
+      // this.props.addDeed(newDeed);
+      // добавим новое дело сначала в БД firebase, затем в state, key задаем предварительно в функции add в api.js
+      const addedDeed = await add(this.props.currentUser, newDeed);
+      this.props.addDeed(addedDeed);
+      this.setState({ redirect: true });
+    }
   }
 
   handleChangeTitle(e) {
@@ -76,6 +94,9 @@ export default class TodoAdd extends Component {
                   onChange={this.handleChangeTitle}
                 />
               </div>
+              {this.state.errorTitle && (
+                <p className="help is-danger">{this.state.errorTitle}</p>
+              )}
             </div>
             <div className="field">
               <label className="label">Описание</label>
