@@ -10,7 +10,7 @@ import Register from "./Register";
 import Login from "./Login";
 import Logout from "./Logout";
 
-import { getList, setDone } from "./api";
+import { getList, setDone, del } from "./api";
 
 // ТЕСТОВЫЙ ЮЗЕР
 // login  test@user.ru
@@ -69,7 +69,6 @@ export default class App extends Component {
 
   componentDidMount() {
     onAuthStateChanged(getAuth(firebaseApp), this.authStateChanged);
-    console.log(this.state.currentUser);
   }
 
   showMobileMenu(e) {
@@ -92,7 +91,9 @@ export default class App extends Component {
     }));
   }
 
-  deleteDeed(key) {
+  async deleteDeed(key) {
+    // удаляем дело из БД дел юзера, затем из state
+    await del(this.state.currentUser, key);
     const newList = this.state.data.filter((deed) => deed.key !== key);
     this.setState(({ data }) => ({
       data: newList,

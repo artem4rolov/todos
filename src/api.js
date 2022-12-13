@@ -7,7 +7,15 @@ import {
 } from "firebase/auth";
 
 // все для работы с БД дел
-import { getDatabase, ref, push, set, get, query } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  push,
+  set,
+  get,
+  query,
+  remove,
+} from "firebase/database";
 
 // регистрация
 export async function register(email, password) {
@@ -85,4 +93,9 @@ export async function getList(user) {
 export async function setDone(user, key) {
   // сначала даем ссылку для функции set на конкретное дело юзера в БД (с помощью key), затем просто передаем значение true
   return set(ref(getDatabase(), `users/${user.uid}/todos/${key}/done`), true);
+}
+
+// удаление дела
+export async function del(user, key) {
+  return remove(ref(getDatabase(), `users/${user.uid}/todos/${key}`));
 }
