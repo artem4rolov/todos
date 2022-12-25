@@ -1,9 +1,12 @@
+import store from "./redux/store";
 import { useParams } from "react-router-dom";
 import { Navigate } from "react-router-dom";
+import { selectItem } from "./redux/selectors";
 
 export default function TodoDetails(props) {
   const { key } = useParams();
-  const deed = props.getDeed(key);
+  // const deed = props.getDeed(key);
+  const deed = selectItem(store.getState(), key);
 
   // проверяем, вошел юзер или нет
   return !props.currentUser ? (

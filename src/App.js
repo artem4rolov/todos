@@ -1,3 +1,4 @@
+import store from "./redux/store";
 import { Component } from "react";
 import { HashRouter, Routes, Route, NavLink } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -43,15 +44,10 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
       showMobileMenu: false,
       currentUser: undefined,
     };
-    this.deleteDeed = this.deleteDeed.bind(this);
-    this.checkDeed = this.checkDeed.bind(this);
-    this.addDeed = this.addDeed.bind(this);
     this.showMobileMenu = this.showMobileMenu.bind(this);
-    this.getDeed = this.getDeed.bind(this);
     this.authStateChanged = this.authStateChanged.bind(this);
   }
 
@@ -60,10 +56,11 @@ export default class App extends Component {
     if (user) {
       // если юзер вошел в приложение, то получаем список его дел через функцию getList из api.js и пихаем их в state
       const newData = await getList(user);
-      this.setState((state) => ({ data: newData }));
+      // this.setState((state) => ({ data: newData })); теперь это делает redux
+      store.dispatch({ type: "todos/getFromFirebase", payload: newData });
     } else {
       // если юзер не вошел, передаем пустой список дел в state
-      this.setState((state) => ({ data: [] }));
+      store.dispatch({ type: "todos/getFromFirebase", payload: [] });
     }
   }
 
@@ -81,34 +78,40 @@ export default class App extends Component {
   getDeed(key) {
     // преобразование key в число при выводе дела уже не нужно, поскольку в БД идентификаторы дел (deed.key) сохраняются в string
     // key = +key;
-    return this.state.data.find((deed) => deed.key === key);
+    // return this.state.data.find((deed) => deed.key === key);
+    // теперь дела получает redux
   }
 
   addDeed(deedObj) {
-    const newList = [...this.state.data, deedObj];
-    this.setState((state) => ({
-      data: newList,
-    }));
+    // const newList = [...this.state.data, deedObj];
+    // this.setState((state) => ({
+    //   data: newList,
+    // }));
+    // теперь дела добавяет redux
   }
 
   async deleteDeed(key) {
     // удаляем дело из БД дел юзера, затем из state
     await del(this.state.currentUser, key);
-    const newList = this.state.data.filter((deed) => deed.key !== key);
-    this.setState(({ data }) => ({
-      data: newList,
-    }));
+    // const newList = this.state.data.filter((deed) => deed.key !== key);
+    // this.setState(({ data }) => ({
+    //   data: newList,
+    // }));
+
+    // теперь дела удаляет redux
   }
 
   async checkDeed(key) {
     // сначала делаем пометку о выполненном деле в БД firebase
     await setDone(this.state.currentUser, key);
     // затем сразу меняем пометку в state
-    const deed = this.state.data.find((deed) => deed.key === key);
-    if (deed) {
-      deed.done = !deed.done;
-    }
-    this.setState((state) => ({}));
+    // const deed = this.state.data.find((deed) => deed.key === key);
+    // if (deed) {
+    //   deed.done = !deed.done;
+    // }
+    // this.setState((state) => ({}));
+
+    // теперь отмечает как завершеное дело - redux
   }
 
   render() {
@@ -203,7 +206,6 @@ export default class App extends Component {
               path="/"
               element={
                 <TodoList
-                  data={this.state.data}
                   deleteDeed={this.deleteDeed}
                   checkDeed={this.checkDeed}
                   currentUser={this.state.currentUser}
