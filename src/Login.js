@@ -1,5 +1,3 @@
-import store from "./redux/store";
-import { selectUser } from "./redux/selectors";
 import { Component } from "react";
 import { Navigate } from "react-router-dom";
 import { login } from "./api";
@@ -90,7 +88,7 @@ export default class Login extends Component {
   }
 
   render() {
-    if (store.getState().selectUser()) {
+    if (this.props.currentUser) {
       return <Navigate to="/" replace />;
     } else
       return (
